@@ -1,6 +1,7 @@
 import express from 'express';
 import requireAll from 'require-all';
 import dotenv from 'dotenv';
+import catchError from './middlewares/catch-error.middleware';
 
 const bootstrap = async () => {
   const app = express();
@@ -8,7 +9,7 @@ const bootstrap = async () => {
 
   dotenv.config();
 
-  await app.use(express.json({ limit: '3mb' }));
+  app.use(express.json({ limit: '3mb' }));
 
   try {
     const controllers = requireAll({
@@ -28,6 +29,8 @@ const bootstrap = async () => {
   } catch (e) {
     console.error(e);
   }
+
+  app.use(catchError);
 
   return app;
 };

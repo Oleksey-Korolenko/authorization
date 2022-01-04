@@ -13,6 +13,7 @@
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
     "require-all": "^3.0.0",
     "validator": "^13.7.0"
@@ -24,6 +25,7 @@
     "@types/lodash": "^4.14.177",
     "@types/node": "^16.11.10",
     "@types/require-all": "^3.0.3",
+    "@types/validator": "^13.7.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^8.3.0",
