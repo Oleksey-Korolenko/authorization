@@ -1,43 +1,80 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
+import { IResponse } from '../common/interface';
 import { sendResponse } from '../common/response';
-import ExampleService from './auth.service';
+import AuthService from './auth.service';
 import validate from './auth.validator';
-import { IAuth } from './interface';
+import { IAuthRquestBody, IAuthTokens } from './interface';
 
 export default (router: typeof Router) => {
   const routes = router();
 
-  const exampleService = new ExampleService();
+  const authService = new AuthService();
 
   routes.post(
     '/sign_up',
-    (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      const reqData = validate.authValidate.auth(req.body);
+    async (
+      req: Request<any, any, IAuthRquestBody, IAuthRquestBody>,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const reqData = validate.authValidate.auth(req.body);
 
-      return sendResponse<string>(200, '', res);
+        const response = await authService.signUp(reqData);
+
+        return sendResponse<IResponse<undefined>>(200, response, res);
+      } catch (e) {
+        next(e);
+      }
     }
   );
 
   routes.post(
     '/login',
-    (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      const reqData = validate.authValidate.auth(req.query);
+    async (
+      req: Request<any, any, IAuthRquestBody, IAuthRquestBody>,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        const reqData = validate.authValidate.auth(req.query);
 
-      return sendResponse<string>(200, '', res);
+        const response = await authService.logIn(reqData);
+
+        return sendResponse<IResponse<IAuthTokens>>(200, response, res);
+      } catch (e) {
+        next(e);
+      }
     }
   );
 
   routes.post(
     '/refresh',
-    (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      return sendResponse<string>(200, '', res);
+    (
+      req: Request<any, any, IAuthRquestBody, IAuthRquestBody>,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        return sendResponse<string>(200, '', res);
+      } catch (e) {
+        next(e);
+      }
     }
   );
 
   routes.get(
     '/me[0-9]',
-    (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      return sendResponse<string>(200, '', res);
+    (
+      req: Request<any, any, IAuthRquestBody, IAuthRquestBody>,
+      res: Response,
+      next: NextFunction
+    ) => {
+      try {
+        return sendResponse<string>(200, '', res);
+      } catch (e) {
+        next(e);
+      }
     }
   );
 

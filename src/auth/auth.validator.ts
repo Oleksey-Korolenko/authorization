@@ -1,23 +1,23 @@
 import _ from 'lodash';
-import { IAuth } from './interface';
+import { IAuthRquestBody } from './interface';
 import validator from 'validator';
 
-const authFields: Array<keyof IAuth> = ['login', 'password'];
+const authFields: Array<keyof IAuthRquestBody> = ['email', 'password'];
 
 class AuthValidate {
-  auth = (payload: IAuth): IAuth => {
-    if (!payload.login) {
-      throw new TypeError(`Payload atribute: [login] doesn't exist!`);
+  auth = (payload: IAuthRquestBody): IAuthRquestBody => {
+    if (!payload.email) {
+      throw new TypeError(`Payload atribute: [email] doesn't exist!`);
     }
 
-    if (!_.isString(payload.login)) {
+    if (!_.isString(payload.email)) {
       throw new TypeError(
-        `Payload atribute: [login] type isn't equal to string!`
+        `Payload atribute: [email] type isn't equal to string!`
       );
     }
 
-    if (!validator.isEmail(payload.login)) {
-      throw new TypeError(`Payload atribute: [login] isn't correct!`);
+    if (!validator.isEmail(payload.email)) {
+      throw new TypeError(`Payload atribute: [email] isn't correct!`);
     }
 
     if (!payload.password) {

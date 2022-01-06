@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import { errorResponse } from '../common/response';
 
-const catchError = (
+export const catchError = (
   err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  errorResponse(err, res);
+  if (err) {
+    errorResponse(err, res);
+  } else {
+    next();
+  }
 };
-
-export default catchError;

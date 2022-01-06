@@ -12,9 +12,9 @@ export default class UserService {
     this._generateObjectId = collections.generateObjectId;
   }
 
-  public findOne = async (login: string): Promise<User | null> => {
+  public findOne = async (email: string): Promise<User | null> => {
     return this._collection?.findOne({
-      login,
+      email,
     }) as Promise<User | null>;
   };
 
@@ -25,7 +25,7 @@ export default class UserService {
   };
 
   public insertOne = async (user: IUserWithoutId): Promise<User | null> => {
-    const existUser = this.findOne(user.email);
+    const existUser = await this.findOne(user.email);
 
     if (existUser !== null) {
       throw new Error(`User: [${user.email}] already exist`);
