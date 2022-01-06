@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",
+    "mongodb": "^4.2.2",
     "require-all": "^3.0.0",
     "validator": "^13.7.0"
   },

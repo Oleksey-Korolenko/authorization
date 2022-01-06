@@ -14,8 +14,6 @@ export default (router: typeof Router) => {
     (req: Request<any, any, IAuth, IAuth>, res: Response) => {
       const reqData = validate.authValidate.auth(req.body);
 
-      const response = ExampleService.example(reqData);
-
       return sendResponse<string>(200, '', res);
     }
   );
@@ -25,8 +23,6 @@ export default (router: typeof Router) => {
     (req: Request<any, any, IAuth, IAuth>, res: Response) => {
       const reqData = validate.authValidate.auth(req.query);
 
-      const response = ExampleService.example(reqData);
-
       return sendResponse<string>(200, '', res);
     }
   );
@@ -34,8 +30,6 @@ export default (router: typeof Router) => {
   routes.post(
     '/refresh',
     (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      const response = ExampleService.example(req.body);
-
       return sendResponse<string>(200, '', res);
     }
   );
@@ -43,8 +37,6 @@ export default (router: typeof Router) => {
   routes.get(
     '/me[0-9]',
     (req: Request<any, any, IAuth, IAuth>, res: Response) => {
-      const response = ExampleService.example(req.body);
-
       return sendResponse<string>(200, '', res);
     }
   );
