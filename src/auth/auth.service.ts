@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { IResponse } from '../common/interface';
 import { IUserInfo, IUserWithoutId } from '../user';
 import UserService from '../user/user.service';
-import { IAuthTokens, IMeResponse } from './interface';
+import { IAccessToken, IAuthTokens, IMeResponse } from './interface';
 
 export default class AuthService {
   private _tokenKey;
@@ -109,7 +109,7 @@ export default class AuthService {
     ).toString('base64');
     const refreshTokenSignature = crypto
       .createHmac('SHA256', this._tokenKey)
-      .update(`${accessTokenHead}.${accessTokenBody}`)
+      .update(`${refreshTokenHead}.${refreshTokenBody}`)
       .digest('base64');
 
     return {
@@ -117,6 +117,34 @@ export default class AuthService {
       data: {
         access_token: `${accessTokenHead}.${accessTokenBody}.${accessTokenSignature}`,
         refresh_token: `${refreshTokenHead}.${refreshTokenBody}.${refreshTokenSignature}`,
+      },
+    };
+  };
+
+  public refresh = async (email: string): Promise<IResponse<IAccessToken>> => {
+    const user = await this._userService.findOne(email);
+
+    if (user === null) {
+      throw new Error(`Can't find user [${email}]`);
+    }
+
+    const exp = this.randomInteger(30, 60) * 1000 + new Date().getTime();
+
+    const accessTokenHead = Buffer.from(
+      JSON.stringify({ alg: 'HS256', typ: 'jwt' })
+    ).toString('base64');
+    const accessTokenBody = Buffer.from(
+      JSON.stringify({ email: user.email, exp })
+    ).toString('base64');
+    const accessTokenSignature = crypto
+      .createHmac('SHA256', this._tokenKey)
+      .update(`${accessTokenHead}.${accessTokenBody}`)
+      .digest('base64');
+
+    return {
+      message: 'Everithing is correct!',
+      data: {
+        access_token: `${accessTokenHead}.${accessTokenBody}.${accessTokenSignature}`,
       },
     };
   };

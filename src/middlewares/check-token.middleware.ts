@@ -14,10 +14,11 @@ export class TokenService {
     this._userService = new UserService();
   }
 
-  public checkUser = async (
+  private checkUser = async (
     req: IRequestWithUser,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
+    isRefresh: boolean
   ) => {
     if (req.headers.authorization === undefined) {
       throw new AuthError(`User doesn't authorize!`);
@@ -28,14 +29,15 @@ export class TokenService {
       .update(`${tokenParts[0]}.${tokenParts[1]}`)
       .digest('base64');
 
-    if (signature === tokenParts[2])
+    if (signature === tokenParts[2]) {
       req.user = JSON.parse(
         Buffer.from(tokenParts[1], 'base64').toString('utf8')
       );
+    }
     if (
       req?.user === undefined ||
       req?.user?.email === undefined ||
-      req?.user?.exp === undefined
+      (!isRefresh && req?.user?.exp === undefined)
     ) {
       throw new AuthError(`User doesn't authorize!`);
     }
@@ -43,10 +45,28 @@ export class TokenService {
     if (user === null) {
       throw new AuthError(`User doesn't authorize!`);
     }
-    const now = new Date().getTime();
-    if (req.user.exp < now) {
-      throw new AuthError(`User doesn't authorize!`);
+    if (!isRefresh) {
+      const now = new Date().getTime();
+      if (req.user.exp < now) {
+        throw new AuthError(`User doesn't authorize!`);
+      }
     }
     next();
+  };
+
+  public checkAccessToken = async (
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    await this.checkUser(req, res, next, false);
+  };
+
+  public checkRefreshToken = async (
+    req: IRequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    await this.checkUser(req, res, next, true);
   };
 }

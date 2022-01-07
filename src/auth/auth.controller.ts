@@ -5,7 +5,12 @@ import { asyncHandler, TokenService } from '../middlewares';
 import { IUserWithoutId } from '../user';
 import AuthService from './auth.service';
 import validate from './auth.validator';
-import { IAuthTokens, IMeResponse, IRequestWithUser } from './interface';
+import {
+  IAccessToken,
+  IAuthTokens,
+  IMeResponse,
+  IRequestWithUser,
+} from './interface';
 
 export default (router: typeof Router) => {
   const routes = router();
@@ -40,14 +45,17 @@ export default (router: typeof Router) => {
 
   routes.post(
     '/refresh',
-    asyncHandler((req: Request, res: Response) => {
-      return sendResponse<string>(200, '', res);
+    asyncHandler(tokenService.checkRefreshToken),
+    asyncHandler(async (req: IRequestWithUser, res: Response) => {
+      const response = await authService.refresh(req.user.email);
+
+      return sendResponse<IResponse<IAccessToken>>(200, response, res);
     })
   );
 
   routes.get(
     '/me[0-9]',
-    asyncHandler(tokenService.checkUser),
+    asyncHandler(tokenService.checkAccessToken),
     asyncHandler(async (req: IRequestWithUser, res: Response) => {
       const response = await authService.me(req.user.email, req.path);
 

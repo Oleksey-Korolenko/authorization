@@ -1,8 +1,13 @@
 import { Request } from 'express';
 import { IUserInfo } from '../../user';
 
-export interface IAuthTokens {
+export interface IAuthTokens extends IAccessToken, IRefreshToken {}
+
+export interface IAccessToken {
   access_token: string;
+}
+
+export interface IRefreshToken {
   refresh_token: string;
 }
 
