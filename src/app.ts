@@ -1,7 +1,7 @@
 import express from 'express';
 import requireAll from 'require-all';
 import dotenv from 'dotenv';
-import { catchError, Token } from './middlewares';
+import { catchError, TokenService } from './middlewares';
 import { connectToDatabase } from './db';
 
 const bootstrap = async () => {
@@ -14,7 +14,7 @@ const bootstrap = async () => {
 
   app.use(express.json({ limit: '3mb' }));
 
-  const token = new Token();
+  const token = new TokenService();
 
   app.use(token.checkToken);
 

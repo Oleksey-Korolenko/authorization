@@ -1,12 +1,16 @@
-import { NextFunction, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import { IRequestWithUser } from '../auth/interface';
+import UserService from '../user/user.service';
 
-export class Token {
+export class TokenService {
   private _tokenKey;
+
+  private _userService;
 
   constructor() {
     this._tokenKey = process.env.TOKEN_KEY ?? '';
+    this._userService = new UserService();
   }
 
   public checkToken = (
@@ -26,12 +30,23 @@ export class Token {
         req.user = JSON.parse(
           Buffer.from(tokenParts[1], 'base64').toString('utf8')
         );
-
-      console.log(req.user);
-
-      next();
     }
 
     next();
+  };
+
+  public checkUser = async (req: Request, res: Response) => {
+    const request = req as IRequestWithUser;
+    if (request.user === undefined) {
+      throw new Error(`User doesn't authorize!`);
+    }
+    const user = await this._userService.findOne(request.user.email);
+    if (user === null) {
+      throw new Error(`User doesn't authorize!`);
+    }
+    const now = new Date().getTime();
+    if (request.user.exp < now) {
+      throw new Error(`User doesn't authorize!`);
+    }
   };
 }
