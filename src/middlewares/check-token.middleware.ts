@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
 import { IRequestWithUser } from '../auth/interface';
 import UserService from '../user/user.service';
+import AuthError from '../types/auth-error.type';
 
 export class TokenService {
   private _tokenKey;
@@ -38,15 +39,15 @@ export class TokenService {
   public checkUser = async (req: Request, res: Response) => {
     const request = req as IRequestWithUser;
     if (request.user === undefined) {
-      throw new Error(`User doesn't authorize!`);
+      throw new AuthError(`User doesn't authorize!`);
     }
     const user = await this._userService.findOne(request.user.email);
     if (user === null) {
-      throw new Error(`User doesn't authorize!`);
+      throw new AuthError(`User doesn't authorize!`);
     }
     const now = new Date().getTime();
     if (request.user.exp < now) {
-      throw new Error(`User doesn't authorize!`);
+      throw new AuthError(`User doesn't authorize!`);
     }
   };
 }
