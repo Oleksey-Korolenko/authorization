@@ -23,7 +23,6 @@ export const errorResponse = (_err: unknown, res: Response) => {
   if (_err instanceof AuthError) {
     message = _err.message;
     status = HttpStatus.UNAUTHORIZED;
-    console.log(HttpStatus.UNAUTHORIZED);
   }
   return sendResponse(status, { message }, res);
 };

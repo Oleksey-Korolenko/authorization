@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import { IAuthRquestBody } from './interface';
 import validator from 'validator';
+import { IUserWithoutId } from '../user';
 
-const authFields: Array<keyof IAuthRquestBody> = ['email', 'password'];
+const authFields: Array<keyof IUserWithoutId> = ['email', 'password'];
 
 class AuthValidate {
-  auth = (payload: IAuthRquestBody): IAuthRquestBody => {
+  auth = (payload: IUserWithoutId): IUserWithoutId => {
     if (!payload.email) {
       throw new TypeError(`Payload atribute: [email] doesn't exist!`);
     }

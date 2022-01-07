@@ -1,7 +1,8 @@
 import crypto from 'crypto';
 import { IResponse } from '../common/interface';
+import { IUserInfo, IUserWithoutId } from '../user';
 import UserService from '../user/user.service';
-import { IAuthRquestBody, IAuthTokens } from './interface';
+import { IAuthTokens, IMeResponse } from './interface';
 
 export default class AuthService {
   private _tokenKey;
@@ -29,7 +30,7 @@ export default class AuthService {
   }
 
   public signUp = async (
-    reqData: IAuthRquestBody
+    reqData: IUserWithoutId
   ): Promise<IResponse<undefined>> => {
     const { email, password } = reqData;
 
@@ -49,8 +50,29 @@ export default class AuthService {
     };
   };
 
+  public me = async (
+    email: string,
+    queryPath: string
+  ): Promise<IResponse<IMeResponse>> => {
+    const user = await this._userService.findOne(email);
+
+    if (user === null) {
+      throw new Error(`Can't find user [${email}]`);
+    }
+
+    return {
+      message: 'Everithing is correct!',
+      data: {
+        request_num: +queryPath[queryPath.length - 1],
+        data: {
+          username: user.email,
+        },
+      },
+    };
+  };
+
   public logIn = async (
-    reqData: IAuthRquestBody
+    reqData: IUserWithoutId
   ): Promise<IResponse<IAuthTokens>> => {
     const { email, password } = reqData;
 

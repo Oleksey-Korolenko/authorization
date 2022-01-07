@@ -2,9 +2,10 @@ import { Request, Response, Router } from 'express';
 import { IResponse } from '../common/interface';
 import { sendResponse } from '../common/response';
 import { asyncHandler, TokenService } from '../middlewares';
+import { IUserWithoutId } from '../user';
 import AuthService from './auth.service';
 import validate from './auth.validator';
-import { IAuthRquestBody, IAuthTokens } from './interface';
+import { IAuthTokens, IMeResponse, IRequestWithUser } from './interface';
 
 export default (router: typeof Router) => {
   const routes = router();
@@ -16,7 +17,7 @@ export default (router: typeof Router) => {
   routes.post(
     '/sign_up',
     asyncHandler(async (req: Request, res: Response) => {
-      const reqData = validate.authValidate.auth(req.body as IAuthRquestBody);
+      const reqData = validate.authValidate.auth(req.body as IUserWithoutId);
 
       const response = await authService.signUp(reqData);
 
@@ -28,7 +29,7 @@ export default (router: typeof Router) => {
     '/login',
     asyncHandler(async (req: Request, res: Response) => {
       const reqData = validate.authValidate.auth(
-        req.query as unknown as IAuthRquestBody
+        req.query as unknown as IUserWithoutId
       );
 
       const response = await authService.logIn(reqData);
@@ -47,9 +48,10 @@ export default (router: typeof Router) => {
   routes.get(
     '/me[0-9]',
     asyncHandler(tokenService.checkUser),
-    asyncHandler(async (req: Request, res: Response) => {
-      console.log(33);
-      return sendResponse<string>(200, '', res);
+    asyncHandler(async (req: IRequestWithUser, res: Response) => {
+      const response = await authService.me(req.user.email, req.path);
+
+      return sendResponse<IResponse<IMeResponse>>(200, response, res);
     })
   );
 

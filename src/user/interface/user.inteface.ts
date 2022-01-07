@@ -8,3 +8,7 @@ export interface IUserWithoutId {
   email: string;
   password: string;
 }
+
+export interface IUserInfo {
+  username: string;
+}

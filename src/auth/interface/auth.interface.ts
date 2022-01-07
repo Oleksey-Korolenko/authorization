@@ -1,9 +1,5 @@
 import { Request } from 'express';
-
-export interface IAuthRquestBody {
-  email: string;
-  password: string;
-}
+import { IUserInfo } from '../../user';
 
 export interface IAuthTokens {
   access_token: string;
@@ -16,5 +12,10 @@ export interface ITokenDate {
 }
 
 export interface IRequestWithUser extends Request {
-  user?: ITokenDate;
+  user: ITokenDate;
+}
+
+export interface IMeResponse {
+  request_num: number;
+  data: IUserInfo;
 }
